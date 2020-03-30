@@ -229,8 +229,9 @@ void ObjLoader::load(const string filename,
 			// if 4th vertex
 			// create a new face using 0th and 2nd vertices
 			// from previous face
-			// lineStream >> sep;
-			if (lineStream.str().length() > 0)
+			string remaining;
+			lineStream >> remaining;
+			if (remaining.length() > 0)
 			{
 				Face secondFace(f);
 				secondFace.posIndices[1] = f.posIndices[2];
@@ -281,4 +282,11 @@ void ObjLoader::load(const string filename,
 		pMat->count = count - offset;
 		offset = count;
 	}
+
+	// remove a material if it has no vertices
+	vector<Material*>::const_iterator endIt = remove_if(materials.begin(),
+		materials.end(),
+		[](Material* pMat) { return (pMat->count == 0); }
+	);
+	materials.erase(endIt, materials.end());
 }

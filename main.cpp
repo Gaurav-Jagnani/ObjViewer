@@ -30,7 +30,7 @@ vector<int> textures;
 glm::mat4 MV(1);
 glm::mat4 P(1);
 
-const string objFile("media/blocks.obj");
+const string objFile("media/model.obj");
 
 Shader shader;
 
@@ -122,7 +122,7 @@ void OnResize(int w, int h) {
 	//set the viewport
 	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 	//setup the projection matrix
-	P = glm::perspective(glm::radians(45.0f),(float)w/h, 0.1f,1000.0f);
+	P = glm::perspective(glm::radians(90.0f),(float)w/h, 0.1f,1000.0f);
 }
 
 
@@ -132,12 +132,10 @@ void onRender()
 
 	shader.use();
 
-	//set the camera transformation
-	glm::mat4 T		= glm::translate(glm::mat4(1.0f),glm::vec3(5.f, 5.0f, -100));
-	glm::mat4 Rx	= glm::rotate(T,  10.f, glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::mat4 MV    = glm::rotate(Rx, 100.f, glm::vec3(0.0f, 1.0f, 0.0f));  
-	glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 0.5f));
-	glUniformMatrix4fv(shader.uniforms["MV"], 1, GL_FALSE, glm::value_ptr(MV*scale));
+	//set the camera
+	glm::mat4 T		= glm::translate(glm::mat4(1.0f),glm::vec3(0.f, 0.0f, -5.0f));
+	glm::mat4 MV(T);
+	glUniformMatrix4fv(shader.uniforms["MV"], 1, GL_FALSE, glm::value_ptr(MV));
 	glUniformMatrix4fv(shader.uniforms["P"], 1, GL_FALSE, glm::value_ptr(P));
 	glUniform1i(shader.uniforms["textureMap"], 0);
 
