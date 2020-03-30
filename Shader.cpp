@@ -66,19 +66,10 @@ void Shader::createAndLinkProgram()
 {
 	m_programId = glCreateProgram();
 	map<GLenum, unsigned int>::const_iterator it = m_shaders.begin();
-	if (m_shaders.find(GL_VERTEX_SHADER) != m_shaders.end())
+	for (; it != m_shaders.end(); it++)
 	{
-		glAttachShader(m_programId, m_shaders[GL_VERTEX_SHADER]);
+		glAttachShader(m_programId, it->second);
 	}
-	if (m_shaders.find(GL_FRAGMENT_SHADER) != m_shaders.end())
-	{
-		glAttachShader(m_programId, m_shaders[GL_FRAGMENT_SHADER]);
-	}
-	// for (; it != m_shaders.end(); it++)
-	// {
-	// 	glAttachShader(m_programId, it->second);
-	// 	cout << "fdffd " << it->second << endl;
-	// }
 
 	glLinkProgram(m_programId);
 	// check for errors

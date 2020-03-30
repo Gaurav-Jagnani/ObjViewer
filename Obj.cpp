@@ -118,13 +118,12 @@ bool readMaterials(const string& filename, vector<Material*>& materials)
 void ObjLoader::load(const string filename,
 	vector<Material*>& materials,
 	vector<Vertex>& vertices,
-	vector<unsigned int>& indices
+	vector<unsigned short>& indices
 )
 {
-	// read material library
 	vector<glm::vec3> positions;
 	vector<glm::vec3> normals;
-	vector<glm::vec3> uvs;
+	vector<glm::vec2> uvs;
 	Mesh* mesh = 0;
 	vector<Face> faces;
 
@@ -167,7 +166,7 @@ void ObjLoader::load(const string filename,
 		if (prefix == "vt")
 		{
 			glm::vec3 uv;
-			lineStream >> uv.x >> uv.y >> uv.z;
+			lineStream >> uv.x >> uv.y;
 			uvs.push_back(uv);
 		}
 
@@ -213,8 +212,8 @@ void ObjLoader::load(const string filename,
 			{
 				
 				lineStream 	>> f.posIndices[i] >> sep
-							>> f.normalIndices[i] >> sep
-							>> f.uvIndices[i];
+							>> f.uvIndices[i] >> sep
+							>> f.normalIndices[i];
 				
 			}
 
@@ -238,8 +237,8 @@ void ObjLoader::load(const string filename,
 				secondFace.normalIndices[1] = f.normalIndices[2];
 				secondFace.uvIndices[1] = f.uvIndices[2];
 				lineStream 	>> secondFace.posIndices[2] >> sep
-							>> secondFace.normalIndices[2] >> sep
-							>> secondFace.uvIndices[2];
+							>> secondFace.uvIndices[2] >> sep
+							>> secondFace.normalIndices[2];
 
 				secondFace.posIndices[2]--;
 				secondFace.normalIndices[2]--;
@@ -264,7 +263,7 @@ void ObjLoader::load(const string filename,
 		vector<unsigned int>& faceIndices = pMat->faceIndices;
 		for (int idx = 0; idx < faceIndices.size(); idx++)
 		{
-			Face& face = faces[idx];
+			Face& face = faces[faceIndices[idx]];
 			for (int j = 0; j < 3; j++)
 			{
 				Vertex vert;

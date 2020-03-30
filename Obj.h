@@ -11,7 +11,7 @@ struct Vertex
 {
 	glm::vec3 position;
 	glm::vec3 normal;
-	glm::vec3 uv;
+	glm::vec2 uv;
 };
 
 struct Face
@@ -49,7 +49,7 @@ struct Material
 
 	std::vector<unsigned int> faceIndices;
 	unsigned int offset;
-	unsigned int count;
+	int count;
 };
 
 
@@ -59,7 +59,7 @@ class ObjLoader
 		static void load(const std::string filename,
 						std::vector<Material*>& materials,
 						std::vector<Vertex>& vertices,
-						std::vector<unsigned int>& indices
+						std::vector<unsigned short>& indices
 		);
 };
 
