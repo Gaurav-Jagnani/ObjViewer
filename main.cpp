@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
 
 #include "Shader.h"
 #include "Obj.h"
@@ -30,6 +31,7 @@ vector<int> textures;
 glm::mat4 MV(1);
 glm::mat4 P(1);
 
+glm::vec3 lightPos = glm::vec3(-8, 20, 5); //object space
 const string objFile("media/model.obj");
 
 Shader shader;
@@ -43,10 +45,13 @@ void onInit()
 	shader.use();
 	shader.loadAttribLocation("vPos");
 	shader.loadAttribLocation("vUV");
+	shader.loadAttribLocation("vNormal");
 	shader.loadUniformLocation("MV");
 	shader.loadUniformLocation("P");
+	shader.loadUniformLocation("N");
 	shader.loadUniformLocation("textureMap");
 	shader.loadUniformLocation("useDefaultColor");
+	shader.loadUniformLocation("lightPos");
 
 	shader.unUse();
 
@@ -71,6 +76,10 @@ void onInit()
 	glEnableVertexAttribArray(shader.attributes["vPos"]);
 	glVertexAttribPointer(shader.attributes["vPos"], 3,
 		GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+	glEnableVertexAttribArray(shader.attributes["vNormal"]);
+	glVertexAttribPointer(shader.attributes["vNormal"],
+		3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, normal));
 
 	glEnableVertexAttribArray(shader.attributes["vUV"]);
 	glVertexAttribPointer(shader.attributes["vUV"],
@@ -122,7 +131,7 @@ void OnResize(int w, int h) {
 	//set the viewport
 	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
 	//setup the projection matrix
-	P = glm::perspective(glm::radians(90.0f),(float)w/h, 0.1f,1000.0f);
+	P = glm::perspective(glm::radians(45.0f),(float)w/h, 0.1f,1000.0f);
 }
 
 
@@ -137,7 +146,9 @@ void onRender()
 	glm::mat4 MV(T);
 	glUniformMatrix4fv(shader.uniforms["MV"], 1, GL_FALSE, glm::value_ptr(MV));
 	glUniformMatrix4fv(shader.uniforms["P"], 1, GL_FALSE, glm::value_ptr(P));
+	glUniformMatrix3fv(shader.uniforms["N"], 1, GL_FALSE, glm::value_ptr(glm::inverseTranspose(glm::mat3(MV))));	
 	glUniform1i(shader.uniforms["textureMap"], 0);
+	glUniform3fv(shader.uniforms["lightPos"], 1, &(lightPos.x));
 
 	for (int i = 0; i < materials.size(); i++)
 	{
